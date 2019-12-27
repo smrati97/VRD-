@@ -1,0 +1,253 @@
+<pre>
+
+Patch Corrections For:  FlexPLM 11.1 M020 on PDMLink 11.1 M020.
+
+
+#####################  Patch 1  #####################
+
+SPR: 8039004 - Refactor changes done against SPR#7474281 and SPR#7941963
+SPR: 8057634 - After creating New Sample Request user not navigating to Samples Page
+SPR: 8112933 - The initialization of Flex User Cache is taking 18 minutes on the QA server
+SPR: 8404516 - Regression per SPR 8112933. Missing sysem views and user groups in TM userlist
+SPR: 8057630 - Delete Sample Request & Delete Sample Option is not available in Actions Menu on View Sample Request Page 
+SPR: 8058805 - Security issue detected in Flex PLM
+SPR: 8341861 - Securtiy issue detected in Windchill PDM Link
+SPR: 8424602 - The User list attribute and group association is broken after installing the Patch 07 in FlexPLM 11.1 M010
+SPR: 8697341 - Internal user unable to login to FlexPLM after applying Fox Patch 01 Seq04
+
+Modified By:
+codebase/com/lcs/wc/foundation/LCSLogic.class
+codebase/com/lcs/wc/product/LCSProductLogic.class
+codebase/rfa/jsp/samples/ViewMultipleSample.jsp
+codebase/com/lcs/wc/resource/SamplesRB.class
+codebase/rfa/jsp/logviewer/LCSAccessLogStatisticsViewPage.jsp
+codebase/com/lcs/wc/client/ClientContext.class
+codebase/com/lcs/wc/load/ExtractWindchill.class
+codebase/com/lcs/wc/util/UserCache*.class
+codebase/com/lcs/wc/util/UserGroupHelper.class
+codebase/com/lcs/wc/workflow/LCSWfWorkListProcessor.class
+codebase/rfa/jsp/samples/ViewSample.jsp
+codebase/rfa/jsp/main/ReviseOption.jsp
+codebase/rfa/jsp/email/ClientSideEmailMain.jsp
+
+#####################  Patch 2  #####################
+
+SPR: 8062530 - Float attribute added to the derived string formula doesn't append the value with correct decimal places in FlexPLM 11.1
+
+Corrected by:
+codebase/com/lcs/wc/foundation/LCSLogic.class
+
+
+SPR: 8066850 - While deleting the product, product gets deleted, but error message is getting populated.
+
+Corrected By:
+codebase/rfa/jsp/delete/DeleteController.jsp
+
+
+SPR: 8214931 - Modify jsp files to use instance of ImageFolderManager.getInstance()
+
+Corrected By:
+codebase/rfa/jsp/main/ImageFileProcessor.jsp
+codebase/rfa/jsp/season/UploadFileInCellTable.jsp
+codebase/rfa/jsp/uiComp/ThumbnailDragnDropUpload.jsp
+
+SPR: 8055050 SKU sizes are not visible on PSD on adding new colorways to product in FlexPLM 11.0
+
+Corrected By:
+codebase/com/lcs/wc/skusize/SKUSizeUtility.class
+codebase/com/lcs/wc/skusize/SKUSizeUtility$1.class
+codebase/com/lcs/wc/skusize/SKUSizeUtility$2.class
+codebase/com/lcs/wc/skusize/SKUSizeUtility$3.class
+
+SPR: 8214923 Modify ImageFolderManager to allow initialization on method server startup
+
+Corrected By:
+codebase/com/lcs/wc/document/ImageFolderManager$Cache.class
+codebase/com/lcs/wc/document/ImageFolderManager$ImagesFolder.class
+codebase/com/lcs/wc/document/ImageFolderManager$ImageSubFolderFilter.class
+codebase/com/lcs/wc/document/ImageFolderManager$Path.class
+codebase/com/lcs/wc/document/ImageFolderManager$ReverseComparator.class
+codebase/com/lcs/wc/document/ImageFolderManager.class
+
+SPR: 8363669 ImageFolderManager.findCurrentFolderPath() should be there when using the no-arg constructor
+
+Corrected By:
+codebase/com/lcs/wc/document/ImageFolderManager$Cache.class
+codebase/com/lcs/wc/document/ImageFolderManager$ImagesFolder.class
+codebase/com/lcs/wc/document/ImageFolderManager$ImageSubFolderFilter.class
+codebase/com/lcs/wc/document/ImageFolderManager$Path.class
+codebase/com/lcs/wc/document/ImageFolderManager$ReverseComparator.class
+codebase/com/lcs/wc/document/ImageFolderManager.class
+codebase/com/lcs/wc/document/ImageFolderManagerLoader.class
+
+SPR: 7940283 When updating the image of a Construction in the library, the change is propagated to the product Construction Set only if the first time
+
+Corrected By:
+codebase/com/lcs/wc/construction/LCSConstructionDetailLogic.class
+
+SPR: 7818005 Hotkeys for Measurement set adds the value instead of subtracting for negative values
+
+Corrected By:
+codebase/rfa/jsp/measurements/MeasurementsEditor2.jsp
+
+<b>
+MANUAL STEPS (Windchill Services not running):
+ Go to windchill shell and run below commands -
+1. xconfmanager -d wt.method.loadObjects (to check the value of the property in wt.properties)
+2. configure it with xconfmanager
+	append " com.lcs.wc.document.ImageFolderManagerLoader" at the end of the sequence/values found in step 1
+example:
+	xconfmanager -s wt.method.loadObjects="com.ptc.tomcat.embedded.Bootstrap wt.method.WTAdapter wt.method.ClusterMonitor wt.method.jmx.Startup ue.PhoneHomeQueueScheduler com.ptc.tomcat.embedded.Bootstrap$WaitUntilStarted com.lcs.wc.document.ImageFolderManagerLoader" -t codebase/wt.properties -p
+</b>
+
+SPR: 8350576 - Support Solr 7.6.0 for FlexPLM
+
+Corrected By:
+src/com/lcs/properties/solr/solrconfig.xml
+
+<b>
+MANUAL STEPS (Windchill Services not running):
+Instructions for Upgrade to Solr-7.6.0
+NOTE:  If NOT using Windchill Index Search (SOLR) you may ignore this manual step
+
+1. Pre-Requisite
+	a. These instructions require the user to have Updated their Windchill and WIS installation to Windchill 11.1 M020 CPS 03 or later with SOLR v7.6.0
+	b. See <a href="https://www.ptc.com/support/-/media/C11064D6FD5840779E2A241A072BED09.pdf"> Windchill Core 11.1M020CPS03 Release Notes </a> and this article <a href="https://www.ptc.com/en/support/article?n=CS303794"> CS303794 </a> for specific SOLR instructions
+
+2. The FlexPLM specific configuration file changes provided by this FlexPLM SPR solution are listed here and should be deployed after updating to Windchill 11.1 M020 CPS 03 or later with SOLR v7.6.0, but prior to rebuilding SOLR indexes for the collection "wblib"
+	a. solrconfig.xml
+3. Use the Bulk Index Tool to rebuild indexes for wblib
+</b>
+
+#####################  Patch 3  #####################
+
+SPR: 8033001 Deleting a Vendor Notice is slow in FlexPLM 11.0 M010
+
+Corrected By:
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache$1.class
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache$AbstractCacheGetter.class
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache$PathCacheGetter.class
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache$RootByClassCacheGetter.class
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache$RootCacheGetter.class
+codebase/com/lcs/wc/flextype/WTSFlexTypeCache.class
+codebase/com/lcs/wc/flextype/FlexTypeQueryStatement.class
+
+SPR: 8089936 - Selectable Attributes table gets disappeared after making changes on the property com.lcs.wc.placeholder.usePlaceholders
+
+Corrected By:
+codebase/rfa/jsp/reports/UpdateReportView.jsp
+
+
+SPR: 8900344 - Instructions for patch force install is missing in patch readme.html
+
+Corrected By:
+src/com/lcs/build/patchTooling/FlexPLM_PatchReadme.html
+
+
+SPR: 8967349 - Update ForceTempPatch option while reinstalling a patch
+
+Corrected By:
+src/com/lcs/build/installer/RFAInstaller2.xml
+
+
+SPR: 8070392 - Concurrent Update Exception on loading extracted linesheet data with SourcingConfigSTSLPrimary set to true.
+
+Corrected By:
+codebase/com/lcs/wc/sourcing/LCSSourcingConfigLogic.class
+codebase/com/lcs/wc/load/LoadSourceAndCost.class
+
+SPR: 8747750 - Problem about calling Client Side Plugin BOMEditor_handleChange and onLoadEvent while edit BOM header
+
+Corrected By:
+codebase/rfa/jsp/flexbom/EditBOMAlt.jsp
+
+
+SPR: 9329802 - Null Pointer Exception is observed
+
+Corrected By:
+codebase/com/lcs/wc/util/FileLocation.java
+
+SPR: 8243194 - When one sample gets auto created it doesn't carry the exact size in the next new sample in FlexPLM 11.0 M030
+
+Corrected By:
+codebase/com/lcs/wc/sample/LCSSampleLogic.class
+
+SPR: 8742229 Unable to load construction data in FlexPLM 11.1
+
+Corrected By:
+codebase/com/lcs/wc/load/LoadConstruction.class
+
+
+#####################  Patch 4  #####################
+
+SPR: 9248079 - Flex upgrade to 11.1 M010 CPS06 P08 appears to be introducing a type error
+SPR: 9250242 - Security Issue in FlexPLM
+SPR: 7843644 - While on Edit Line Sheet, when user clicks on any column attribute to enter information, system automatically moves that particular column to the right most column in current view in FlexPLM 11.0
+SPR: 9246578 - Material Supplier Price is showing as 0, in BOM ->Palette tab, where as in other tab like search results or seasonal palette it showing proper non zero value in FlexPLM
+SPR: 8193209 - In the Work List, workflow variables are not interpreted correctly in the instructions of a workflow in FlexPLM 11 M030
+SPR: 8419090 - In the Work List, javascript link is not encoded correctly in the instructions of a workflow in FlexPLM 11 M030 P18
+SPR: 8382199 - The Colorway Cost Sheet Recalculate fails with a red screen error in single cost sheet mode in FlexPLM
+SPR: 8018396 - Users without Create Document access are unable to generate tech pack in the system
+SPR: 9343676 - Error message is getting concatenated in Create document page while choose file as attachement
+SPR: 8738362 - Modify Search is not working for Colorway in FlexPLM 11.1 M020
+SPR: 9527202 - Getting java.lang.StringIndexOutOfBoundsException: String index out of range: -1 error when viewing Product Size Definition page
+SPR: 8726191 - Not able to View RFQ Costsheet view page on clicking view button
+SPR: 8243207 - Date picker pop-up gets rendered at the bottom of the material search pane on BOM Editor in FlexPLM 11.0
+SPR: 9534984 - Unable to update an existing image page in Design Suite plugin
+SPR: 8076428 - Poor Performance When Importing Types due to FlexTypeLogic.deleteFilterViewReferences() persisting unchanged FiltersList and ColumnList objects
+SPR: 8076433 - Performance Issues with Importing Types due to FlexTypeLogic.deleteFilterViewReferences() processing only 1 attribute at a time
+SPR: 8093825 - When "Material Pricing Mode Override" attribute is removed from layout (hidden) material price is not displayed in product BOM.
+SPR: 9523987 - RFQ page is not loading properly after pressing the browser back button
+SPR: 9539127 - On Fit Sample information One hand key of Enter is not working when "Separator" row is inserted
+SPR: 9549424 - User unable to View RFQ Costsheet view page from update RFQ page
+SPR: 9340886 - "Remove Products" option is not available when view is modified and it is displayed only when Run is clicked
+SPR: 9405692 - classcastexception while create Product, when an object reference attribute is included in the seasonChangeLog.properties in FlexPLM 11.1M020
+SPR: 9480768 - Upon creation of a colorway from a product while season selected, after scrolling down the Save button doesn't work at all
+SPR: 7499875 - Date attribute doesn't display in the linesheet if the Browser language is else than eng-US and the day is greater than 12 in FlexPLM 11.0 M030
+
+Modified By:
+src/com/lcs/build/installer/RFAInstaller2.xml
+codebase/rfa/jsp/document/UpdateImagePageDocument.jsp
+codebase/rfa/javascript/flexExt.js
+codebase/rfa/jsp/flexbom/BOMMaterialChooser.jsp
+codebase/rfa/jsp/season/LinePlan.jsp
+codebase/rfa/jsp/season/LinePlanColumnDefinition.jsp
+codebase/rfa/jsp/wf/ViewWorkList.jsp
+codebase/rfa/jsp/specification/ChooseSingleSpecPage2.jsp
+codebase/rfa/jsp/document/CreateDocument.jsp
+codebase/com/lcs/wc/wf/LCSWorkitemQuery.class
+codebase/com/lcs/wc/workflow/FlexWfAssignedActivity.class
+codebase/com/lcs/wc/sourcing/LCSSKUCostSheet.class
+codebase/rfa/jsp/sku/FindSKUResults.jsp
+codebase/rfa/jsp/sizing/ViewProductSizeCategoryPlugin.jsp
+codebase/rfa/javascript/jsCalendar/calendar.jsp
+codebase/rfa/jsp/flexbom/BOMMaterialChooser.jsp
+codebase/rfa/jsp/flexbom/BOMColorChooser.jsp
+codebase/rfa/javascript/javascript.js
+codebase/com/lcs/wc/tools/winru/XMPRepair.class
+codebase/com/lcs/wc/flextype/FlexTypeLogic.class
+codebase/com/lcs/wc/flextype/StandardFlexTypeService*.class
+codebase/com/lcs/wc/report/ReportConfigurationLogic.class
+codebase/com/lcs/wc/material/MaterialPricingEntryQuery.class
+codebase/com/lcs/wc/util/responseFilters/ResponseFilter.class
+codebase/rfa/jsp/samples/UpdateMultipleSample.jsp
+codebase/rfa/jsp/sourcing/RFQController.jsp
+codebase/rfa/jsp/sourcing/UpdateRFQRequest.jsp
+codebase/rfa/jsp/season/LinePlanHeader.jsp
+codebase/com/lcs/wc/season/LCSSeasonChangeLogLogic.class
+codebase/rfa/jsp/product/UpdateProductStickyHeader.jsp
+codebase/com/lcs/wc/util/FormatHelper.class
+codebase/com/lcs/wc/client/web/TableColumn.class
+
+
+#####################  Patch 5  #####################
+
+SPR: 9533541 Email Page in FlexPLM does not work with wt.mail.mailhost=MAIL_HOST:MAIL_PORT
+
+Corrected By:
+codebase/rfa/jsp/email/ClientSideEmailController.jsp
+
+
+</pre>
+<!-- KEEP PRE TAGS WRAPPED AROUND CONTENT SO CAN KEEP FORMATTED - DO NOT PUT ANYTHING AFTER THIS LINE -->
+
